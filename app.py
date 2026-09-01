@@ -13,41 +13,38 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Light Theme & High-Contrast Metric CSS Injection
+# High-Contrast Light Theme Custom CSS
 st.markdown("""
     <style>
-    /* Force main app background and default text to light tones */
+    /* Main background and base font colors */
     .stApp {
         background-color: #f8fafc;
         color: #0f172a;
     }
     
-    /* Global light container boxes */
+    /* Typography color updates */
+    h1, h2, h3, h4, label {
+        color: #0f172a !important;
+        font-family: 'Inter', sans-serif;
+    }
+    
+    /* Light Metric Cards */
     div[data-testid="stMetric"] {
         background-color: #ffffff !important;
         border: 1px solid #e2e8f0 !important;
-        padding: 18px !important;
+        padding: 15px !important;
         border-radius: 10px !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
     
-    /* High contrast metric label */
     div[data-testid="stMetricLabel"] > label {
         color: #475569 !important;
         font-weight: 600 !important;
-        font-size: 0.9rem !important;
     }
     
-    /* High contrast metric numeric value */
     div[data-testid="stMetricValue"] > div {
         color: #0f172a !important;
-        font-size: 1.8rem !important;
         font-weight: 700 !important;
-    }
-
-    /* Headings readability fix */
-    h1, h2, h3, h4, label {
-        color: #0f172a !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -64,6 +61,9 @@ df = load_data()
 
 @st.cache_data
 def compute_rankings(data, min_shots):
+    if data.empty:
+        return pd.DataFrame()
+        
     gk_stats = data.groupby('goalkeeper').agg(
         shots_faced=('is_goal', 'count'),
         avg_bisector_error=('bisector_dist', 'mean'),
@@ -112,31 +112,45 @@ if page == "📊 Executive Scouting Dashboard":
     col1, col2, col3, col4 = st.columns(4)
     col1.metric("Total Shots Analyzed", len(df))
     col2.metric("Goalkeepers Evaluated", len(rankings_df))
-    col3.metric("Avg Bisector Error", f"{df['bisector_dist'].mean():.2f} yds")
-    col4.metric("Avg Depth", f"{df['gk_depth'].mean():.2f} yds")
+    col3.metric("Avg Bisector Error", f"{df['bisector_dist'].mean():.2f} yds" if not df.empty else "N/A")
+    col4.metric("Avg Depth", f"{df['gk_depth'].mean():.2f} yds" if not df.empty else "N/A")
     
-    st.dataframe(
-        rankings_df[['goalkeeper', 'shots_faced', 'avg_bisector_error', 'avg_depth', 'avg_model_prob', 'total_gsaa', 'calibrated_scouting_score']]
-        .rename(columns={'calibrated_scouting_score': 'Calibrated Index'})
-        .style.background_gradient(subset=['Calibrated Index'], cmap='Blues'),
-        use_container_width=True
-    )
+    if not rankings_df.empty:
+        st.dataframe(
+            rankings_df[['goalkeeper', 'shots_faced', 'avg_bisector_error', 'avg_depth', 'avg_model_prob', 'total_gsaa', 'calibrated_scouting_score']]
+            .rename(columns={'calibrated_scouting_score': 'Calibrated Index'})
+            .style.background_gradient(subset=['Calibrated Index'], cmap='Blues'),
+            use_container_width=True
+        )
 
 # PAGE 2: GOALKEEPER PROFILE
 elif page == "🎯 Goalkeeper Deep Dive Profile":
-    selected_gk = st.selectbox("Select Goalkeeper:", rankings_df['goalkeeper'].unique())
-    gk_data = df[df['goalkeeper'] == selected_gk]
-    
-    st.subheader(f"Tactical Shot Map: {selected_gk}")
-    fig, ax = plt.subplots(figsize=(8, 5))
-    ax.set_facecolor('#1e293b')
-    ax.scatter(gk_data['shot_x'], gk_data['shot_y'], c='crimson', label='Shot Origin', s=60)
-    ax.scatter(gk_data['gk_x'], gk_data['gk_y'], c='cyan', label='GK Position', marker='^', s=60)
-    ax.set_xlim(90, 121)
-    ax.set_ylim(10, 70)
-    ax.set_title(f"Freeze Frames for {selected_gk}", color='white')
-    ax.legend(facecolor='#0e1117', labelcolor='white')
-    st.pyplot(fig)
+    if not rankings_df.empty:
+        selected_gk = st.selectbox("Select Goalkeeper:", rankings_df['goalkeeper'].unique())
+        gk_data = df[df['goalkeeper'] == selected_gk]
+        
+        st.subheader(f"Tactical Shot Map: {selected_gk}")
+        
+        # Light theme Matplotlib setup
+        fig, ax = plt.subplots(figsize=(8, 5))
+        fig.patch.set_facecolor('#ffffff')
+        ax.set_facecolor('#f8fafc')
+        
+        ax.scatter(gk_data['shot_x'], gk_data['shot_y'], c='#dc2626', label='Shot Origin', s=60)
+        ax.scatter(gk_data['gk_x'], gk_data['gk_y'], c='#0284c7', label='GK Position', marker='^', s=60)
+        
+        ax.set_xlim(90, 121)
+        ax.set_ylim(10, 70)
+        ax.set_title(f"Freeze Frames for {selected_gk}", color='#0f172a', fontweight='bold')
+        ax.set_xlabel("Field X Position", color='#475569')
+        ax.set_ylabel("Field Y Position", color='#475569')
+        ax.tick_params(colors='#0f172a')
+        
+        for spine in ax.spines.values():
+            spine.set_color('#cbd5e1')
+            
+        ax.legend(facecolor='#ffffff', edgecolor='#e2e8f0', labelcolor='#0f172a')
+        st.pyplot(fig)
 
 # PAGE 3: SIMULATOR
 elif page == "📐 Interactive Geometry Simulator":
@@ -145,16 +159,27 @@ elif page == "📐 Interactive Geometry Simulator":
     shot_y = st.slider("Shot Y Position:", 20.0, 60.0, 30.0)
     drift = st.slider("Goalkeeper Drift off Bisector (Yards):", -4.0, 4.0, 1.2)
     
+    # Light theme Matplotlib setup
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.set_facecolor('#0f172a')
-    ax.plot([120, 120], [36, 44], color='red', linewidth=5, label='Goal Line')
-    ax.scatter([shot_x], [shot_y], color='gold', s=120, label='Shot Origin')
+    fig.patch.set_facecolor('#ffffff')
+    ax.set_facecolor('#f8fafc')
+    
+    ax.plot([120, 120], [36, 44], color='#dc2626', linewidth=5, label='Goal Line')
+    ax.scatter([shot_x], [shot_y], color='#d97706', s=120, label='Shot Origin')
+    
     ax.set_xlim(90, 122)
     ax.set_ylim(15, 65)
-    ax.legend(facecolor='#1e293b', labelcolor='white')
+    ax.set_title("Angle Bisector & Goal Cone Simulation", color='#0f172a', fontweight='bold')
+    ax.tick_params(colors='#0f172a')
+    
+    for spine in ax.spines.values():
+        spine.set_color('#cbd5e1')
+        
+    ax.legend(facecolor='#ffffff', edgecolor='#e2e8f0', labelcolor='#0f172a')
     st.pyplot(fig)
 
 # PAGE 4: EXPORT
 elif page == "📥 Export & Download Center":
     st.subheader("Export Data")
-    st.download_button("Download Leaderboard CSV", rankings_df.to_csv(index=False), "goalkeeper_rankings.csv", "text/csv")
+    if not rankings_df.empty:
+        st.download_button("Download Leaderboard CSV", rankings_df.to_csv(index=False), "goalkeeper_rankings.csv", "text/csv")
