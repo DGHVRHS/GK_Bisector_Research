@@ -116,7 +116,7 @@ if page == "📊 Executive Scouting Dashboard":
     col2.metric("Goalkeepers Evaluated", len(rankings_df))
     col3.metric("Avg Bisector Error", f"{df['bisector_dist'].mean():.2f} yds" if not df.empty else "N/A")
     col4.metric("Avg Depth", f"{df['gk_depth'].mean():.2f} yds" if not df.empty else "N/A")
-    col5.metric("League Central %", f"{(df['angle_zone']=='Central').mean()*100:.1f}%" if not df.empty else "N/A")
+    col5.metric("Central Shooting Angle %", f"{(df['angle_zone']=='Central').mean()*100:.1f}%" if not df.empty else "N/A")
     
     if not rankings_df.empty:
         st.dataframe(
