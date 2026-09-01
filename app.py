@@ -44,10 +44,20 @@ st.markdown("""
 
 @st.cache_data
 def load_data():
-    for fname in ["goalkeeper_shot_analysis (1).csv", "goalkeeper_shot_analysis.csv"]:
-        if os.path.exists(fname):
-            return pd.read_csv(fname)
-    st.error("Missing dataset. Please ensure 'goalkeeper_shot_analysis.csv' is in the root directory.")
+    # Gets the directory where app.py is located
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    candidate_paths = [
+        os.path.join(base_dir, "goalkeeper_shot_analysis.csv"),
+        os.path.join(base_dir, "goalkeeper_shot_analysis (1).csv"),
+        os.path.join(base_dir, "data", "goalkeeper_shot_analysis.csv") # in case it's in a subfolder
+    ]
+    
+    for path in candidate_paths:
+        if os.path.exists(path):
+            return pd.read_csv(path)
+            
+    st.error(f"Dataset not found. Checked locations: {candidate_paths}")
     return pd.DataFrame()
 
 df = load_data()
