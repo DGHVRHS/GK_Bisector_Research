@@ -100,7 +100,7 @@ page = st.sidebar.radio("Select View:", [
     "📥 Export & Download Center"
 ])
 
-min_shots = st.sidebar.slider("Minimum Shots Faced Filter:", 1, 30, 5)
+min_shots = st.sidebar.slider("Minimum Shots Faced Filter:", 1, 300, 20)
 rankings_df = compute_rankings(df, min_shots)
 
 st.title("🎯 Goalkeeper Bisector & Positional Scouting Model")
