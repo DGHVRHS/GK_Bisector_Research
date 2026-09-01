@@ -95,7 +95,7 @@ def compute_rankings(data, min_shots):
 # Sidebar Navigation
 st.sidebar.title("⚽ Navigation & Filters")
 page = st.sidebar.radio("Select View:", [
-    "📊 Scouting Dashboard",
+    "📊 Executive Scouting Dashboard",
     "📐 Interactive Geometry Simulator",
     "📥 Export & Download Center"
 ])
