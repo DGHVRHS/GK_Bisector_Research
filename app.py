@@ -13,11 +13,42 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# 2. Light Theme & High-Contrast Metric CSS Injection
 st.markdown("""
     <style>
-    .main { background-color: #0e1117; }
-    h1, h2, h3 { color: #f1f5f9; font-family: 'Inter', sans-serif; }
-    .stMetric { background-color: #1e293b; padding: 15px; border-radius: 10px; border: 1px solid #334155; }
+    /* Force main app background and default text to light tones */
+    .stApp {
+        background-color: #f8fafc;
+        color: #0f172a;
+    }
+    
+    /* Global light container boxes */
+    div[data-testid="stMetric"] {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        padding: 18px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* High contrast metric label */
+    div[data-testid="stMetricLabel"] > label {
+        color: #475569 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* High contrast metric numeric value */
+    div[data-testid="stMetricValue"] > div {
+        color: #0f172a !important;
+        font-size: 1.8rem !important;
+        font-weight: 700 !important;
+    }
+
+    /* Headings readability fix */
+    h1, h2, h3, h4, label {
+        color: #0f172a !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
