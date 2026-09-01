@@ -97,7 +97,6 @@ page = st.sidebar.radio("Select View:", [
     "📊 Executive Scouting Dashboard",
     "🎯 Goalkeeper Deep Dive Profile",
     "📐 Interactive Geometry Simulator",
-    "🤖 ML Model & SHAP Explainer",
     "📥 Export & Download Center"
 ])
 
