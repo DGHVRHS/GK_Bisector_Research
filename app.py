@@ -44,7 +44,7 @@ st.markdown("""
 
 @st.cache_data
 def load_data():
-    for fname in ["goalkeeper_shot_analysis (1).csv", "goalkeeper_shot_analysis.csv"]:
+    for fname in ["goalkeeper_shot_analysis (1).csv"]:
         if os.path.exists(fname):
             return pd.read_csv(fname)
     st.error("Missing dataset. Please ensure 'goalkeeper_shot_analysis.csv' is in the root directory.")
