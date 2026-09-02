@@ -94,8 +94,7 @@ st.sidebar.title("⚽ Navigation & Filters")
 page = st.sidebar.radio("Select View:", [
     "📊 Executive Scouting Dashboard",
     "🎯 Goalkeeper Deep Dive Profile",
-    "📐 Interactive Geometry Simulator",
-    "📥 Export & Download Center"
+    "📐 Interactive Geometry Simulator"
 ])
 
 st.sidebar.markdown("---")
