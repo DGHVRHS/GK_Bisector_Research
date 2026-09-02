@@ -107,7 +107,7 @@ rankings_df = compute_rankings(df, min_shots, zone_filter)
 st.title(" Goalkeeper Bisector & Positional Scouting Model")
 
 # PAGE 1: EXECUTIVE DASHBOARD
-if page == "Executive Scouting Dashboard":
+if page == "📊 Executive Scouting Dashboard":
     st.subheader("League Positional Scouting Leaderboard")
     
     col1, col2, col3, col4, col5 = st.columns(5)
@@ -197,7 +197,7 @@ if page == "Executive Scouting Dashboard":
                 st.pyplot(fig)
 
 # PAGE 2: GOALKEEPER DEEP DIVE PROFILE
-elif page == "Goalkeeper Deep Dive Profile":
+elif page == "🎯 Goalkeeper Deep Dive Profile":
     if not rankings_df.empty:
         selected_gk = st.selectbox("Select Goalkeeper:", rankings_df['goalkeeper'].unique())
         gk_data = df[df['goalkeeper'] == selected_gk]
@@ -294,7 +294,7 @@ elif page == "🤖 Model Insights & SHAP":
         st.pyplot(fig)
 
 # PAGE 4: INTERACTIVE GEOMETRY SIMULATOR
-elif page == "Interactive Geometry Simulator":
+elif page == "📐 Interactive Geometry Simulator":
     st.subheader("Interactive Angle Bisector & Positional xG Simulator")
     
     col_ctrl1, col_ctrl2 = st.columns(2)
